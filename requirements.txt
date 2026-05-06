@@ -1,0 +1,13 @@
+numpy>=1.24.0
+pandas>=2.0.0
+yfinance>=0.2.18
+pandas-ta
+gymnasium>=0.28.1
+stable-baselines3[extra]>=2.0.0
+torch>=2.0.0
+scipy>=1.10.0
+PyYAML>=6.0
+optuna>=3.0.0
+shap>=0.40.0
+quantstats>=0.0.64
+boto3

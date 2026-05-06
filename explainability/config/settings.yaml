@@ -1,0 +1,146 @@
+# ══════════════════════════════════════════════════════════════════
+#  Alpha-Inspector – Central Configuration
+# ══════════════════════════════════════════════════════════════════
+# Values here can be overridden by environment variables where noted.
+# Env vars always take precedence over this file.
+
+# ── Data Scope ────────d───────────────────────────────────────────
+data_scope:
+  # Canonical benchmark run directory beneath the provided data root.
+  # Leave empty when trading data sits directly under benchmark-data/ (no run_000 level).
+  run_dir: ""
+
+  # Regime directory used for transaction-level and single-run analysis.
+  trading_regime_dir: general
+
+  # Directory used for aggregated multi-run summaries.
+  aggregated_dir: aggregated_general
+
+# ── Per-agent temperatures ──────────────────────────────────────
+# 0.0 = deterministic, 0.4 = grounded creativity, higher = more creative.
+temperatures:
+  data_analyst: 0.0         # Router – deterministic
+  hypothesis_forum: 0.4     # Creative but grounded hypothesis generation
+  hypothesis_maker: 0.4     # Same as forum (used when forum is disabled)
+  hypothesis_investigator: 0.0  # Router – deterministic
+  code_hypothesis_forum: 0.2
+  code_consensus_forum: 0.2
+  code_generator: 0.0       # Code must be precise
+  report_generator: 0.2     # Fluent yet faithful
+  peer_reviewer: 0.1        # Rigorous, consistent scoring
+  adversarial_challenger: 0.3  # Creative counter-arguments
+  adversarial_defender: 0.2    # Thoughtful defence
+  consensus_forum: 0.3        # Evidence-based discussion
+
+# ── Hypothesis Forum ────────────────────────────────────────────
+forum:
+  # Maximum number of hypotheses kept after dedup (hard cap).
+  max_hypotheses: 20
+
+  # Max response tokens for each panelist LLM call.
+  # 20 structured hypotheses in JSON need ~5 000 tokens; 8192 is safe.
+  max_tokens: 8192
+
+  # Similarity threshold for near-duplicate detection (0.0–1.0).
+  # Higher = stricter (fewer dropped).  Override: FORUM_DEDUP_THRESHOLD
+  dedup_threshold: 0.70
+
+  # Panelist specs (provider:model).  Override: FORUM_PANELISTS
+  # Leave empty to use the default LLM provider.
+  panelists:
+    - "openrouter:google/gemini-3.1-flash-lite-preview"
+    - "openrouter:google/gemini-3.1-flash-lite-preview"
+    - "openrouter:google/gemini-3.1-flash-lite-preview"
+    - "openrouter:google/gemini-3.1-flash-lite-preview"
+    
+  # ── Peer Review (Phase 3) ──────────────────────────────────────
+  peer_review:
+    enabled: true
+    # Minimum average score (1.0–10.0) to survive review.
+    min_score: 6.0
+    # Reviewer LLM spec (provider:model). Empty = use default LLM.
+    reviewer: ""
+
+  # ── Adversarial Defence (Phase 4) ──────────────────────────────
+  adversarial:
+    enabled: false
+    # Challenger LLM spec (provider:model). Empty = use default LLM.
+    challenger: ""
+
+# ── Code Hypothesis Forum ──────────────────────────────────────
+code_forum:
+  max_tokens: 8192
+  dedup_threshold: 0.72
+  explainer:
+    model: "openrouter:google/gemini-3.1-flash-lite-preview"
+    max_tokens: 8192
+    temperature: 0.1
+  panelists:
+    - "openrouter:google/gemini-3.1-flash-lite-preview"
+    - "openrouter:google/gemini-3.1-flash-lite-preview"
+    - "openrouter:google/gemini-3.1-flash-lite-preview"
+    - "openrouter:google/gemini-3.1-flash-lite-preview"
+  roles:
+    - "Architecture Cartographer"
+    - "Environment and Risk Auditor"
+    - "Training and Optimization Auditor"
+    - "Metrics and Validation Auditor"
+  peer_review:
+    enabled: true
+
+# ── Hypothesis Investigator ────────────────────────────────────
+investigator:
+  # Max code_generator → executor cycles before forcing report.
+  max_calls: 3
+
+  # Minimum plots needed to consider the investigation complete.
+  min_plots: 3
+
+  # Max retries for code-fix loops before giving up on a broken script.
+  max_code_retries: 10
+
+# ── Code Hypothesis Investigator ───────────────────────────────
+code_investigator:
+  max_calls: 2
+  max_evidence_tasks: 5
+  max_code_retries: 3
+
+# ── Code Generator ─────────────────────────────────────────────
+code_generator:
+  # Max response tokens for code generation.
+  # Scripts validating 20 hypotheses with 5–8 plots need ~4000+ tokens.
+  max_tokens: 8192
+
+# ── Report Generator ──────────────────────────────────────────
+report_generator:
+  # Max response tokens for report writing.
+  # Full post-mortem reports with 20 hypotheses + embedded images need room.
+  max_tokens: 16384
+
+code_report_generator:
+  max_tokens: 8192
+
+# ── Consensus Forum ──────────────────────────────────────────
+consensus_forum:
+  # Max response tokens for each panelist per round.
+  max_tokens: 8192
+  # Forum rounds: 1=propose only, 2=+evaluate, 3=+consensus (full).
+  max_rounds: 3
+
+code_consensus_forum:
+  max_rounds: 3
+
+# ── LLM Defaults ───────────────────────────────────────────────
+llm:
+  # Default provider: openrouter | ollama | bedrock
+  # Override: LLM_PROVIDER
+  #default_provider: openrouter
+  default_provider: "openrouter:google/gemini-3.1-flash-lite-preview"
+  # Max response tokens per tier.
+  # Override: LLM_MAX_TOKENS_LIGHT / LLM_MAX_TOKENS_HEAVY
+  max_tokens_light: 4096
+  max_tokens_heavy: 16384
+
+# ── LangGraph ──────────────────────────────────────────────────
+graph:
+  recursion_limit: 50

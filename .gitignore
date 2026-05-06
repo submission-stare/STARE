@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+
+# Data Caches
+*.csv
+data_cache.csv
+experiments/**/data_cache.csv
+
+# Output logs and DBs
+*.log
+*.sqlite
+*.db
+*.jsonl
+explainability/logs/
+tuning/logs/
+experiments/**/reproduction_results.txt
+reproduction_results.txt
+main.txt
+
+# outputs from scripts
+results/
+
+# intermediate explainability outputs
+explainability/generated_code_results
+explainability/output
+explainability/check_input_data
+
+# Virtual Environments
+venv/
+env/
+.venv/
+newco/
+newco_env/
+.env
+
+# PDFs
+# *.pdf
+
+# TXT
+*.txt
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Build / packaging
+*.egg-info/
+dist/
+build/
